@@ -56,6 +56,10 @@ func resourcePairRead(ctx context.Context, d *schema.ResourceData, m interface{}
 	if err != nil {
 		return diag.FromErr(err)
 	}
+	if resp.StatusCode == http.StatusNotFound {
+		d.SetId("")
+	}
+
 	defer resp.Body.Close()
 	value, err := ioutil.ReadAll(resp.Body)
 	if err != nil {
@@ -95,7 +99,11 @@ func resourcePairDelete(ctx context.Context, d *schema.ResourceData, m interface
 	var diags diag.Diagnostics
 
 	key := d.Get("key").(string)
-	_, err := http.Post(fmt.Sprintf("%s/%s", providerConfig.Host, key), "text/plain", nil)
+	req, err := http.NewRequest(http.MethodDelete, fmt.Sprintf("%s/%s", providerConfig.Host, key), nil)
+	if err != nil {
+		return diag.FromErr(err)
+	}
+	_, err = http.DefaultClient.Do(req)
 	if err != nil {
 		return diag.FromErr(err)
 	}

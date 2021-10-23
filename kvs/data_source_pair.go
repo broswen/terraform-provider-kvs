@@ -35,6 +35,10 @@ func dataSourcePairRead(ctx context.Context, d *schema.ResourceData, m interface
 	if err != nil {
 		return diag.FromErr(err)
 	}
+	if resp.StatusCode == http.StatusNotFound {
+		d.SetId("")
+	}
+
 	defer resp.Body.Close()
 	value, err := ioutil.ReadAll(resp.Body)
 	if err != nil {
