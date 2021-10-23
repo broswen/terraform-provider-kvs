@@ -7,7 +7,7 @@ This provider exposes a resource to manage key-value pairs and a data source to 
 
 This sets the value of "pair1" to "value1"
 ```
-resource "kvs_pair" "pair1"{
+resource "kvs_pair" "pair1" {
   key = "pair1"
   value = "value1"
 }
